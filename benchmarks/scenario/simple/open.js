@@ -74,7 +74,7 @@ function generateWorkload() {
         let acc_id = generateAccount();
         account_array.push(acc_id);
 
-        if (bc.bcType === 'fabric') {
+        if (bc.getType() === 'fabric') {
             workload.push({
                 chaincodeFunction: 'open',
                 chaincodeArguments: [acc_id, initMoney.toString()],

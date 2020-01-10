@@ -2,7 +2,7 @@
 test:
   name: simple
   description: This is an example benchmark for caliper
-  clients:
+  workers:
     type: local
     number: 1
   rounds:

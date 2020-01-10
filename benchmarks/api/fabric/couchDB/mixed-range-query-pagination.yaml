@@ -1,21 +1,17 @@
 ---
 test:
   name: fixed-asset-mixed-range-query-pagination-couchDB
-  description: This is a duration based benchmark targetting a Hyperledger Fabric network with a CouchDB world state database using the `fixed-asset` NodeJS chaincode contract that is interacted with via
+  description: This is a duration based benchmark targeting a Hyperledger Fabric network with a CouchDB world state database using the `fixed-asset` NodeJS chaincode contract that is interacted with via
     a Fabric-SDK-Node Gateway. Each test round invokes the 'paginatedRangeQuery' method against a DB populated with mixed size assets. Successive rounds increase the pagesize of retrieved assets.
-  clients:
+  workers:
     type: local
     number: 4
   rounds:
   - label: mixed-range-query-evaluate-10
     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `paginatedRangeQuery`. This method performs a paginated range query, with a passed pagesize of 10 and a range keys that bound 200 assets created by the calling client.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-backlog
-      opts:
-        unfinished_per_client: 15
+    txDuration: 120
+    rateControl: { type: fixed-backlog,  opts: { unfinished_per_client: 15, startingTps: 10} }
     arguments:
       create_sizes: [100,1000,2000,4000,8000]
       assets: 8000
@@ -28,12 +24,8 @@ test:
   - label: mixed-range-query-evaluate-20
     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `paginatedRangeQuery`. This method performs a paginated range query, with a passed pagesize of 20 and a range keys that bound 200 assets created by the calling client.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-backlog
-      opts:
-        unfinished_per_client: 15
+    txDuration: 120
+    rateControl: { type: fixed-backlog,  opts: { unfinished_per_client: 15, startingTps: 10} }
     arguments:
       range: 200
       offset: 100
@@ -44,12 +36,8 @@ test:
   - label: mixed-range-query-evaluate-50
     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `paginatedRangeQuery`. This method performs a paginated range query, with a passed pagesize of 50 and a range keys that bound 200 assets created by the calling client.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-backlog
-      opts:
-        unfinished_per_client: 15
+    txDuration: 120
+    rateControl: { type: fixed-backlog,  opts: { unfinished_per_client: 15, startingTps: 10} }
     arguments:
       range: 200
       offset: 100
@@ -60,12 +48,8 @@ test:
   - label: mixed-range-query-evaluate-100
     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `paginatedRangeQuery`. This method performs a paginated range query, with a passed pagesize of 100 and a range keys that bound 200 assets created by the calling client.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-backlog
-      opts:
-        unfinished_per_client: 15
+    txDuration: 120
+    rateControl: { type: fixed-backlog,  opts: { unfinished_per_client: 15, startingTps: 10} }
     arguments:
       range: 200
       offset: 100
@@ -76,12 +60,8 @@ test:
   - label: mixed-range-query-evaluate-200
     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `paginatedRangeQuery`. This method performs a paginated range query, with a passed pagesize of 200 and a range keys that bound 200 assets created by the calling client.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-backlog
-      opts:
-        unfinished_per_client: 10
+    txDuration: 120
+    rateControl: { type: fixed-backlog,  opts: { unfinished_per_client: 15, startingTps: 10} }
     arguments:
       range: 200
       offset: 100
@@ -92,13 +72,8 @@ test:
   - label: mixed-range-query-evaluate-500
     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `paginatedRangeQuery`. This method performs a paginated range query, with a passed pagesize of 500 and a range keys that bound 200 assets created by the calling client.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-backlog
-      opts:
-        sleep_time: 500
-        unfinished_per_client: 2
+    txDuration: 120
+    rateControl: { type: fixed-backlog,  opts: { unfinished_per_client: 15, startingTps: 10} }
     arguments:
       range: 200
       offset: 100
@@ -106,31 +81,25 @@ test:
       nosetup: true
       consensus: false
     callback: benchmarks/api/fabric/lib/mixed-range-query-asset.js
-#   - label: mixed-range-query-evaluate-20-fixed-tps
-#     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `paginatedRangeQuery`. This method performs a paginated range query, with a passed pagesize of 20 and a range keys that bound 200 assets created by the calling client at a fixed TPS.
-#     chaincodeId: fixed-asset
-#     txDuration:
-#     - 120
-#     rateControl:
-#     - type: fixed-rate
-#       opts:
-#         tps: 30
-#     arguments:
-#       range: 200
-#       offset: 100
-#       pagesize: '20'
-#       nosetup: true
-#       consensus: false
-#     callback: benchmarks/api/fabric/lib/mixed-range-query-asset.js
+  - label: mixed-range-query-evaluate-20-fixed-tps
+    description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `paginatedRangeQuery`. This method performs a paginated range query, with a passed pagesize of 20 and a range keys that bound 200 assets created by the calling client at a fixed TPS.
+    chaincodeId: fixed-asset
+    txDuration: 120
+    rateControl: { type: fixed-rate, opts: { tps: 30 }}
+    arguments:
+      range: 200
+      offset: 100
+      pagesize: '20'
+      nosetup: true
+      consensus: false
+    callback: benchmarks/api/fabric/lib/mixed-range-query-asset.js
 monitor:
-  type:
-  - docker
-  - process
-  docker:
-    name:
-    - all
+  interval: 5
+  type: ['process', 'docker']
   process:
-  - command: node
-    arguments: local-client.js
-    multiOutput: avg
-  interval: 1
+    processes: [{ command: 'node', arguments: 'fabricClientWorker.js', multiOutput: 'avg' }]
+  docker:
+    containers: ['all']
+observer:
+  type: local
+  interval: 30

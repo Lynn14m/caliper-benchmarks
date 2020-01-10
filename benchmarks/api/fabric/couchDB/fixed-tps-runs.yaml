@@ -1,32 +1,24 @@
 ---
 test:
   name: fixed-tps-runs
-  description: Benchmark run to enable resource comparrison for benchmarks
-  clients:
+  description: Benchmark run to enable resource comparison for benchmarks
+  workers:
     type: local
     number: 4
   rounds:
   - label: create-asset-8000
     description: Test a submitTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `createAsset`, which inserts an asset of size 8000 bytes into the World State database.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-rate
-      opts:
-        tps: 125
+    txDuration: 120
+    rateControl: { type: fixed-rate, opts: { tps: 125} }
     arguments:
       bytesize: 8000
     callback: benchmarks/api/fabric/lib/create-asset.js
   - label: create-asset-batch-20-8000
     description: Test a submitTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `createAssetsFromBatch`, which inserts a batch of 20 assets of size 8k bytes into the World State database.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-rate
-      opts:
-        tps: 15
+    txDuration: 120
+    rateControl: { type: fixed-rate, opts: { tps: 125} }
     arguments:
       bytesize: 8000
       batchsize: 20
@@ -34,12 +26,8 @@ test:
   - label: get-asset-evaluate-8000
     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `getAsset`. This method performs a getState on an item that matches an asset of size 8000 bytes.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-     - type: fixed-rate
-       opts:
-         tps: 350
+    txDuration: 120
+    rateControl: { type: fixed-rate, opts: { tps: 125} }
     arguments:
       create_sizes: [100,1000,2000,4000,8000,16000,32000,64000]
       bytesize: 8000
@@ -49,12 +37,8 @@ test:
   - label: get-asset-batch-evaluate-20-8000
     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `getAssetsFromBatch`. This method performs a getState on a batch of 20 UUIDs that each match an asset of size 8000 bytes.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-rate
-      opts:
-        tps: 30
+    txDuration: 120
+    rateControl:  { type: fixed-rate, opts: { tps: 50} }
     arguments:
       create_sizes: [8000]
       assets: 8000
@@ -65,12 +49,8 @@ test:
   - label: mixed-range-query-evaluate-20
     description: Test an evaluateTransaction() Gateway method against the NodeJS `fixed-asset` Smart Contract method named `paginatedRangeQuery`. This method performs a paginated range query, with a passed pagesize of 20 and a range keys that bound 200 assets created by the calling client.
     chaincodeId: fixed-asset
-    txDuration:
-    - 120
-    rateControl:
-    - type: fixed-rate
-      opts:
-        tps: 30
+    txDuration: 120
+    rateControl:  { type: fixed-rate, opts: { tps: 50} }
     arguments:
       range: 200
       offset: 100
@@ -79,14 +59,12 @@ test:
       consensus: false
     callback: benchmarks/api/fabric/lib/mixed-range-query-asset.js
 monitor:
-  type:
-  - docker
-  - process
-  docker:
-    name:
-    - all
+  interval: 5
+  type: ['process', 'docker']
   process:
-  - command: node
-    arguments: local-client.js
-    multiOutput: avg
-  interval: 1
+    processes: [{ command: 'node', arguments: 'fabricClientWorker.js', multiOutput: 'avg' }]
+  docker:
+    containers: ['all']
+observer:
+  type: local
+  interval: 30
